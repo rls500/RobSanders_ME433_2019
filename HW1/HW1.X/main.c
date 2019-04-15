@@ -38,7 +38,7 @@
 
 
 //Constants
-#define CORE_TICKS 24000 // 24000 Ticks (1000 Hz)
+#define CORE_TICKS 12000 // 24000 Ticks (1000 Hz)
 
 int main() {
 
@@ -70,6 +70,10 @@ int main() {
         if(_CP0_GET_COUNT() >CORE_TICKS){
             LATAINV = 0b00010000;
             _CP0_SET_COUNT(0);     
+        }
+        if(PORTBbits.RB4==0){
+            _CP0_SET_COUNT(0);
+            LATAbits.LATA4=0;
         }
     }
 }
