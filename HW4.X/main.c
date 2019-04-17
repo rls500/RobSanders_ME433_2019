@@ -71,14 +71,18 @@ int main() {
     while(1){
         _CP0_SET_COUNT(0); //Start timer
         
-        setVoltage(0,v1);
-        v1 = v1+rise*(VOLTAGE_MAX/(200/2));
-        if((v1<=0) | (v1 >= VOLTAGE_MAX)){
+        
+        v1 = v1+rise*(VOLTAGE_MAX/(200/2)); //voltage increases or decreases proper 
+        if((v1<=0) | (v1 >= VOLTAGE_MAX-100)){
             rise = rise*-1;
         }
+        //Set triangle wave voltage
+        setVoltage(0,v1);
+        
         
         float f = VOLTAGE_MAX/2 +(VOLTAGE_MAX/2)*sin(i*2*3.1415/1000*10);  //should make a 10Hz sin wave)
         i++;
+        
         setVoltage(1,f);
         
         while(_CP0_GET_COUNT()< 24000000/1000) {};
