@@ -22,7 +22,7 @@
 #pragma config WDTPS = PS1 // use slowest wdt
 #pragma config WINDIS = OFF // wdt no window mode
 #pragma config FWDTEN = OFF // wdt disabled
-#pragma config FWDTWINSZ = WINSZ_25 // wdt window at 25%
+#pragma config FWDTWINSZ = WINSZ_25 // wdt  window at 25%
 
 // DEVCFG2 - get the sysclk clock to 48MHz from the 8MHz crystal
 #pragma config FPLLIDIV = DIV_2 // divide input clock to be in range 4-5MHz
@@ -41,20 +41,46 @@
 
 //Constants
 #define CORE_TICKS 12000 // 24000 Ticks (1000 Hz)
+#define VOLTAGE_MAX 4095 //12 bit range for DAC
 
 int main() {
-
+    
     __builtin_disable_interrupts();
-
+    
     // set the CP0 CONFIG register to indicate that kseg0 is cacheable (0x3)
     __builtin_mtc0(_CP0_CONFIG, _CP0_CONFIG_SELECT, 0xa4210583);
-
+    
     // 0 data RAM access wait states
     BMXCONbits.BMXWSDRM = 0x0;
-
+    
     // enable multi vector interrupts
     INTCONbits.MVEC = 0x1;
-
     // disable JTAG to get pins back
     DDPCONbits.JTAGEN = 0;
+    TRISAbits.TRISA4=0;
+    
+    
+    LATAbits.LATA4=1;
+    __builtin_enable_interrupts();
+    
+    init_SPI();
+    
+    int i =0;
+    int v1=0;
+    int rise=1;
+    while(1){
+        _CP0_SET_COUNT(0); //Start timer
+        
+        setVoltage(0,v1);
+        v1 = v1+rise*(VOLTAGE_MAX/(200/2));
+        if((v1<=0) | (v1 >= VOLTAGE_MAX)){
+            rise = rise*-1;
+        }
+        
+        float f = VOLTAGE_MAX/2 +(VOLTAGE_MAX/2)*sin(i*2*3.1415/1000*10);  //should make a 10Hz sin wave)
+        i++;
+        setVoltage(1,f);
+        
+        while(_CP0_GET_COUNT()< 24000000/1000) {};
+    }
 }

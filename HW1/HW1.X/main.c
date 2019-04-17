@@ -38,7 +38,7 @@
 
 
 //Constants
-#define CORE_TICKS 12000 // 24000 Ticks (1000 Hz)
+#define CORE_TICKS 12000 // 12000 Ticks (1000 Hz)
 
 int main() {
 
