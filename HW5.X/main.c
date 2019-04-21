@@ -1,6 +1,7 @@
 #include<xc.h>           // processor SFR definitions
 #include<sys/attribs.h>  // __ISR macro
 #include "I2C.h"
+#include "Expander.h"
 
 // DEVCFG0
 #pragma config DEBUG = OFF // no debugging
@@ -41,6 +42,7 @@
 #define CORE_TICKS 1200000
 
 
+
 int main() {
 
     __builtin_disable_interrupts();
@@ -63,12 +65,25 @@ int main() {
     TRISBbits.TRISB4=1;
     //SETS OUTPUT TO HIGH
     LATAbits.LATA4=1;
-    __builtin_enable_interrupts();
     
+    i2c_master_setup();
+    __builtin_enable_interrupts();
+    initExpander();
+    char state = 0;
+    setExpander(0,0);
     while(1){
         if(_CP0_GET_COUNT() >CORE_TICKS){
             LATAINV = 0b00010000;
             _CP0_SET_COUNT(0);     
+        }
+        //setExpander(0,1); 
+        //state = getExpander();
+        
+        if(state >> 7){
+            setExpander(0,0); 
+        }
+        else{
+            setExpander(0,1);
         }
         
     }
