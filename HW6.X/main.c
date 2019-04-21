@@ -1,7 +1,7 @@
 #include<xc.h>           // processor SFR definitions
 #include<sys/attribs.h>  // __ISR macro
-#include "I2C.h"
-#include "Expander.h"
+#include "ili9341.h"
+
 
 // DEVCFG0
 #pragma config DEBUG = OFF // no debugging
@@ -65,26 +65,17 @@ int main() {
     TRISBbits.TRISB4=1;
     //SETS OUTPUT TO HIGH
     LATAbits.LATA4=1;
-    
-    i2c_master_setup();
+   
+    SPI1_init();
+    LCD_init();
+    LCD_clearScreen(ILI9341_NAVY)
     __builtin_enable_interrupts();
-    initExpander();
-    char state = 0;
-    setExpander(0,0);
     while(1){
         if(_CP0_GET_COUNT() >CORE_TICKS){
             LATAINV = 0b00010000;
-            _CP0_SET_COUNT(0);     
+            _CP0_SET_COUNT(0);   
         }
-        //setExpander(0,1); 
-        
-        
-        if(getExpander() == 0){
-            setExpander(0,1); 
-        }
-        else{
-            setExpander(0,0);
-        }
-        
+        int i = 10;
+        char m[100];
     }
 }

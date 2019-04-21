@@ -13,6 +13,6 @@
 
 void initExpander();
 void setExpander(char pins, char level);
-char getExpander();
+unsigned char getExpander();
 
 #endif
