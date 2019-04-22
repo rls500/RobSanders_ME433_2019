@@ -186,7 +186,7 @@ void LCD_init() {
 
 void SPI1_init() {
   SDI1Rbits.SDI1R = 0b0100; // B8 is SDI1
-  RPA1Rbits.RPA1R = 0b0011; // A1 is SDO1
+  RPB11Rbits.RPB11R = 0b0011; // B11 is SDO1
   TRISBbits.TRISB7 = 0; // CS is B7
   CS = 1; // CS starts high
 
@@ -296,4 +296,12 @@ void LCD_drawProgress(unsigned short x, unsigned short y, unsigned short length,
             }
         }
     }
+}
+void LCD_drawString(char string[], unsigned short x, unsigned short y, unsigned short fontColor, unsigned short bckColor){
+    int i=0;
+    while(string[i]){
+        LCD_drawLetter(string[i],x+i*5,y,fontColor,bckColor);
+    i++;
+    }
+
 }

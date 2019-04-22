@@ -68,8 +68,9 @@ int main() {
    
     SPI1_init();
     LCD_init();
-    LCD_clearScreen(ILI9341_NAVY)
+    LCD_clearScreen(ILI9341_NAVY);
     __builtin_enable_interrupts();
+    
     while(1){
         if(_CP0_GET_COUNT() >CORE_TICKS){
             LATAINV = 0b00010000;
@@ -77,5 +78,6 @@ int main() {
         }
         int i = 10;
         char m[100];
+        LCD_drawString("Hello my name is rob this is my string",0,0,ILI9341_WHITE,ILI9341_BLACK);
     }
 }
