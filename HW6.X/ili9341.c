@@ -268,9 +268,9 @@ void LCD_drawLetter(char letter, unsigned short x, unsigned short y, unsigned sh
     int i;
     char bit;
     
-    for(i=0; i<5; i++) {
-       for(j=0; j<8; j++) {
-           bit = ASCII[asciiRow][i] >> j & 1;
+    for(i=0; i<5; i++) { //loops through 5 columns to write
+       for(j=0; j<8; j++) { //loops through 8 rows to write
+           bit = ASCII[asciiRow][i] >> j & 1; //if the relevant bit is 1
            if(bit){
                LCD_drawPixel(x+i,y+j,fontColor);
            }
@@ -288,7 +288,7 @@ void LCD_drawProgress(unsigned short x, unsigned short y, unsigned short length,
     
     for(i=0; i<length;i++) {
         for (j=0; j<8; j++){
-            if ((i/length) < percentage){
+            if (i < percentage){
                 LCD_drawPixel(x+i,y+j,barcolor);
             }
             else{

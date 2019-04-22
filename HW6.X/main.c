@@ -1,6 +1,7 @@
 #include<xc.h>           // processor SFR definitions
 #include<sys/attribs.h>  // __ISR macro
 #include "ili9341.h"
+#include <stdio.h>
 
 
 // DEVCFG0
@@ -39,7 +40,7 @@
 #pragma config FVBUSONIO = ON // USB BUSON controlled by USB module
 
 //Constants
-#define CORE_TICKS 1200000
+#define CORE_TICKS 2400000
 
 
 
@@ -68,16 +69,33 @@ int main() {
    
     SPI1_init();
     LCD_init();
-    LCD_clearScreen(ILI9341_NAVY);
+    LCD_clearScreen(ILI9341_PINK);
     __builtin_enable_interrupts();
     
+    int i = 0;
+    double f =0;
+    long time=0;
+    float fps;
     while(1){
-        if(_CP0_GET_COUNT() >CORE_TICKS){
-            LATAINV = 0b00010000;
-            _CP0_SET_COUNT(0);   
-        }
-        int i = 10;
+        
         char m[100];
-        LCD_drawString("Hello my name is rob this is my string",0,0,ILI9341_WHITE,ILI9341_BLACK);
+        
+        if(_CP0_GET_COUNT() >CORE_TICKS){
+            sprintf(m, "Hello World %d! ", i);
+            _CP0_SET_COUNT(0); //timing how long screen printing takes
+            LCD_drawString(m,28,32,ILI9341_WHITE,ILI9341_BLACK);
+            LCD_drawProgress(LCD_drawProgress( 28, 42, 100, i, ILI9341_NAVY, ILI9341_WHITE));
+            fps = (float)24000000/_CP0_GET_COUNT();//calculate fps
+            sprintf(m,"FPS: %2.3f",fps);
+            LCD_drawString(m,28,52,ILI9341_WHITE,ILI9341_BLACK);//display fps
+            if(i==100){
+            i=0;
+            }
+            i++;
+            
+                 
+        }
+        
+        
     }
 }
