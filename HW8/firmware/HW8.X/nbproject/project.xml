@@ -19,6 +19,9 @@
                 <sourceRootElem>..\src</sourceRootElem>
                 <sourceRootElem>..\src\default</sourceRootElem>
                 <sourceRootElem>..\src\system_config\default</sourceRootElem>
+                <sourceRootElem>.</sourceRootElem>
+                <sourceRootElem>../../../HW7.X</sourceRootElem>
+                <sourceRootElem>../../../HW9.X</sourceRootElem>
             </sourceRootList>
             <confList>
                 <confElem>

@@ -194,8 +194,7 @@ static const char ASCII[96][5] = {
 #define MADCTL_MH  0x04  ///< LCD refresh right to left
 
 // spi pins
-#define CSLCD LATBbits.LATB7
-#define CSTOUCH LATBbits.LATB9
+#define CS LATBbits.LATB7
 #define DC LATBbits.LATB15
 
 // functions
@@ -209,8 +208,5 @@ void LCD_setAddr(unsigned short x, unsigned short y, unsigned short w, unsigned 
 void LCD_drawPixel(unsigned short x, unsigned short y, unsigned short color);
 void LCD_clearScreen(unsigned short color);
 void LCD_drawLetter(char letter, unsigned short x, unsigned short y, unsigned short fontColor, unsigned short bckColor);
-void Touch_read(unsigned short *x, unsigned short *y, unsigned int *z);
-void Touch_Pix(unsigned short x,unsigned short y,unsigned short *xpix,unsigned short *ypix);
-void LCD_drawButton(unsigned short x, unsigned short y,unsigned short width, unsigned short height, char string[],unsigned short buttonColor);
 
 #endif

@@ -116,7 +116,6 @@ void APP_Initialize ( void )
 {
     /* Place the App state machine in its initial state. */
     appData.state = APP_STATE_INIT;
-    int CORE_TICKS = 12000;
     TRISAbits.TRISA4=0;
     TRISBbits.TRISB4=1;
     //SETS OUTPUT TO HIGH
@@ -157,55 +156,83 @@ void APP_Tasks ( void )
             }
             break;
         }
-
+        
         case APP_STATE_SERVICE_TASKS:
         {
-            int CORE_TICKS = 1200000;
+            int CORE_TICKS = 12000;
             int BAR_LENGTH = 100;
-            char m[100];
-            char recvd;
-            int i;
-            unsigned char data[14];
-            signed short recondata[7];
-            int accelPercent;
 
-            recvd = IMU_read(WHOAMI);
-            LCD_drawLetter(recvd,28,16,ILI9341_WHITE,ILI9341_BLACK);
-            if(_CP0_GET_COUNT() >CORE_TICKS){
-            LATAINV = 0b00010000;
-            
-            I2C_read_multiple(OUTX_L_XL, data, 6);
-            IMU_reconstructData(data, recondata, 6);
-     
-            sprintf(m,"X: %i   ",recondata[0]);
-            LCD_drawString(m,28,32+8*0,ILI9341_WHITE,ILI9341_BLACK);
-            if (recondata[0]>0){
-                accelPercent = (recondata[0])/163;
-                LCD_drawXProgress(120,160,1,BAR_LENGTH,accelPercent,ILI9341_BLUE,ILI9341_WHITE);
-                LCD_drawXProgress(120,160,-1,BAR_LENGTH,0,ILI9341_BLUE,ILI9341_WHITE);
-            }
-            else{
-                accelPercent = (-recondata[0])/163;
-                LCD_drawXProgress(120,160,-1,BAR_LENGTH,accelPercent,ILI9341_BLUE,ILI9341_WHITE);
-                LCD_drawXProgress(120,160,1,BAR_LENGTH,0,ILI9341_BLUE,ILI9341_WHITE);
-            }
-            
-            
-            sprintf(m,"Y: %i   ",recondata[1]);
-            LCD_drawString(m,28,32+8*1,ILI9341_WHITE,ILI9341_BLACK);
-            if (recondata[1]>0){
-                accelPercent = (recondata[1])/163;
-                LCD_drawYProgress(120,160,1,BAR_LENGTH,accelPercent,ILI9341_BLUE,ILI9341_WHITE);
-                LCD_drawYProgress(120,160,-1,BAR_LENGTH,0,ILI9341_BLUE,ILI9341_WHITE);
-            }
-            else{
-                accelPercent = (-recondata[1])/163;
-                LCD_drawYProgress(120,160,-1,BAR_LENGTH,accelPercent,ILI9341_BLUE,ILI9341_WHITE);
-                LCD_drawYProgress(120,160,1,BAR_LENGTH,0,ILI9341_BLUE,ILI9341_WHITE);
-            }
-            
-            _CP0_SET_COUNT(0);    
+        i2c_master_setup();
+        SPI1_init();
+        LCD_init();
+        IMU_init();
+        LCD_clearScreen(ILI9341_PINK);
+        __builtin_enable_interrupts();
+
+        char m[100];
+        char recvd;
+        int i;
+        unsigned char data[14];
+        signed short recondata[7];
+        int accelPercent;
+
+        /*
+        I2C_read_multiple(OUT_TEMP_L, data, 14);
+        IMU_reconstructData(data, recondata, 14);
+
+        for(i=0;i<7;i++){
+            sprintf(m,"%i",recondata[i]);
+            LCD_drawString(m,28,32+8*i,ILI9341_WHITE,ILI9341_BLACK);
         }
+
+        */
+        recvd = IMU_read(WHOAMI);
+        LCD_drawLetter(recvd,28,16,ILI9341_WHITE,ILI9341_BLACK);
+
+        /*
+        sprintf(m, "Hello World %d! ", i);
+        LCD_drawString(m,28,32,ILI9341_WHITE,ILI9341_BLACK);
+        */
+        while(1){
+            if(_CP0_GET_COUNT() >CORE_TICKS){
+                LATAINV = 0b00010000;
+
+                I2C_read_multiple(OUTX_L_XL, data, 6);
+                IMU_reconstructData(data, recondata, 6);
+
+                sprintf(m,"X: %i   ",recondata[0]);
+                LCD_drawString(m,28,32+8*0,ILI9341_WHITE,ILI9341_BLACK);
+                if (recondata[0]>0){
+                    accelPercent = (recondata[0])/163;
+                    LCD_drawXProgress(120,160,1,BAR_LENGTH,accelPercent,ILI9341_BLUE,ILI9341_WHITE);
+                    LCD_drawXProgress(120,160,-1,BAR_LENGTH,0,ILI9341_BLUE,ILI9341_WHITE);
+                }
+                else{
+                    accelPercent = (-recondata[0])/163;
+                    LCD_drawXProgress(120,160,-1,BAR_LENGTH,accelPercent,ILI9341_BLUE,ILI9341_WHITE);
+                    LCD_drawXProgress(120,160,1,BAR_LENGTH,0,ILI9341_BLUE,ILI9341_WHITE);
+                }
+
+
+                sprintf(m,"Y: %i   ",recondata[1]);
+                LCD_drawString(m,28,32+8*1,ILI9341_WHITE,ILI9341_BLACK);
+                if (recondata[1]>0){
+                    accelPercent = (recondata[1])/163;
+                    LCD_drawYProgress(120,160,1,BAR_LENGTH,accelPercent,ILI9341_BLUE,ILI9341_WHITE);
+                    LCD_drawYProgress(120,160,-1,BAR_LENGTH,0,ILI9341_BLUE,ILI9341_WHITE);
+                }
+                else{
+                    accelPercent = (-recondata[1])/163;
+                    LCD_drawYProgress(120,160,-1,BAR_LENGTH,accelPercent,ILI9341_BLUE,ILI9341_WHITE);
+                    LCD_drawYProgress(120,160,1,BAR_LENGTH,0,ILI9341_BLUE,ILI9341_WHITE);
+                }
+
+                _CP0_SET_COUNT(0);    
+            }
+
+
+
+            }
             break;
         }
 
