@@ -186,7 +186,7 @@ void LCD_init() {
 
 void SPI1_init() {
   SDI1Rbits.SDI1R = 0b0100; // B8 is SDI1
-  RPB11Rbits.RPB11R = 0b0011; // B11 is SDO1
+  RPA1Rbits.RPA1R = 0b0011; // B11 is SDO1
   TRISBbits.TRISB7 = 0; // CSLCD is B7
   TRISBbits.TRISB9 = 0; // CSTOUCH is B9
   CSLCD = 1; // CS starts high
