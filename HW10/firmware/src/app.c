@@ -63,12 +63,26 @@ int startTime = 0; // to remember the loop time
 char m[100];
 char recvd;
 int i;
+int j;
 unsigned char data[14];
 signed short recondata[7];
 int accelPercent;
 int BAR_LENGTH = 100;
 int count = 0;
 bool startCount = false;
+int buffSize = 7;
+int MAFBuff[7] = {0,0,0,0,0,0,0};
+int buffCount = 0;
+int MAFavg =0;
+signed short IIRPrev = 0;
+float IIRA = 0.8;
+float IIRB = 0.2;
+float IIRAvg = 0;
+
+unsigned short FIRBuff[7]= {0,0,0,0,0,0,0};
+float FIRWeights[7] = {0.0212,0.0897,0.2343,0.3094,0.2343,.0897,0.0212};
+float FIRavg =0;
+
 
 // *****************************************************************************
 /* Application Data
@@ -463,7 +477,31 @@ void APP_Tasks(void) {
             IMU_reconstructData(data, recondata, 12);
             
             
-            len = sprintf(dataOut, "%d: %d %d %d %d %d %d \r\n", count+1, recondata[0],recondata[1],recondata[2],recondata[3],recondata[4],recondata[5]);
+            
+            for(j=buffSize-1;j>-1;j--){
+                MAFBuff[j+1] = MAFBuff[j];
+            }
+            MAFBuff[0] = recondata[5];
+            MAFavg = 0;
+            for(j=0; j<buffSize; j++){
+                MAFavg = MAFavg + MAFBuff[j];
+            }
+            MAFavg = MAFavg/buffSize;
+            
+            IIRAvg = IIRA*IIRPrev + IIRB*recondata[5];
+            IIRPrev = recondata[5];
+            
+            
+            for(j=buffSize-1;j>-1;j--){
+                FIRBuff[j+1] = FIRBuff[j];
+            }
+            FIRBuff[0] = recondata[5];
+            FIRavg = 0;
+            for(j=0; j<buffSize; j++){
+                FIRavg = FIRavg + MAFBuff[j]*FIRWeights[j];
+            }
+            
+            len = sprintf(dataOut, "%d  %d %d %.1f %.1f\r\n", count+1,recondata[5], MAFavg, IIRAvg,FIRavg);
             
             /* IF A LETTER WAS RECEIVED, ECHO IT BACK SO THE USER CAN SEE IT */
             
