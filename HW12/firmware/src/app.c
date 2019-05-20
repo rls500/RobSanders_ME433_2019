@@ -315,7 +315,7 @@ void APP_Tasks(void) {
             break;
 
         case APP_STATE_MOUSE_EMULATE:
-            if(_CP0_GET_COUNT() >CORE_TICKS){
+            
                 LATAINV = 0b00010000;
 
                 I2C_read_multiple(OUTX_L_XL, data, 6);
@@ -348,8 +348,8 @@ void APP_Tasks(void) {
                     LCD_drawYProgress(120,160,1,BAR_LENGTH,0,ILI9341_BLUE,ILI9341_WHITE);
                 }
 
-                _CP0_SET_COUNT(0);   
-            }
+                
+            
             // every 50th loop, or 20 times per second
             
             appData.mouseButton[0] = MOUSE_BUTTON_STATE_RELEASED;
